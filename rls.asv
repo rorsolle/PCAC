@@ -1,0 +1,35 @@
+function data = rls(idx, data, params)
+
+Y = data.Y;
+U = data.U;
+P = data.P;
+Theta = data.Theta;
+
+rls_params = params.rls_params;
+t_d = rls_params.t_d;
+t_n = rls_params.t_n;
+n_est = rls_params.n_est;
+
+if isfield(rls_params,"lambda")
+    
+if idx - n_est - t_d > 0
+    Z = zeros(n_y,t_d+1);
+    count = 0;
+    for k=idx-t_d:idx
+        count=count+1;
+        phi_k = compute_phi(Y, U, k, params);
+        Z(:,count) = Y(:,k) - phi*theta;
+    end
+    g = vrf(Z,params);
+    lambda = 1/(1+eta*g*(g>=0));
+
+    z_k = Z(:,end);
+end
+
+L_k = 1/lambda*P(:,:,idx);
+P(:,:,idx+1) = L_k - L_k*phi_k'*inv(eye(n_y) + phi_k*L_k*phi_k')*phi_k*L_k;
+Theta(:,idx+1) = Theta(:,idx) + P(:,:,idx+1)*phi_k'*z_k;
+
+
+end
+
