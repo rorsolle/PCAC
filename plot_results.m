@@ -1,37 +1,38 @@
 %% Plot
+linewidth=2;
 
 % Theta
-figure(1)
-sqrt_nb_var = ceil(sqrt(nb_var));
-for k=1:nb_var
-subplot(sqrt_nb_var,ceil(nb_var/sqrt_nb_var),k)
-%plot(Theta(k,:))
-loglog(abs(Theta(k,:) - theta_ref(k))')
-xlabel("k (step)")
-text = '$|\hat{\theta}_'+string(k)+' - \theta_'+string(k) + '|$';
-ylabel(text,'Interpreter','latex','FontWeight','bold')
-end
-title("Parameter estimation error")
+% figure(1)
+% sqrt_nb_var = ceil(sqrt(nb_var));
+% for k=1:nb_var
+% subplot(sqrt_nb_var,ceil(nb_var/sqrt_nb_var),k)
+% %plot(Theta(k,:))
+% loglog(abs(Theta(k,:) - theta_ref(k))',"LineWidth",linewidth)
+% xlabel("k (step)")
+% text = '$|\hat{\theta}_'+string(k)+' - \theta_'+string(k) + '|$';
+% ylabel(text,'Interpreter','latex','FontWeight','bold')
+% end
+% title("Parameter estimation error")
 
 % Input Output
 figure(2)
 ax1 = subplot(6,1,1);
-stairs(t,Y)
+stairs(t,Y,"LineWidth",linewidth)
 hold on
-stairs(t,sys_params.ref(t),"--k")
+stairs(t,sys_params.ref(t),"--k","LineWidth",linewidth)
 ylabel("Output")
 set(gca,'XTickLabel',[])
 
 ax2 = subplot(6,1,2);
-stairs(t,U)
+stairs(t,U,"LineWidth",linewidth)
 hold on
-stairs(t,ones(size(t))*pcac_params.u_min,"--k")
-stairs(t,ones(size(t))*pcac_params.u_max,"--k")
+stairs(t,ones(size(t))*pcac_params.u_min,"--k","LineWidth",linewidth)
+stairs(t,ones(size(t))*pcac_params.u_max,"--k","LineWidth",linewidth)
 ylabel("Input")
 set(gca,'XTickLabel',[])
 
 ax3 = subplot(6,1,3);
-stairs(t,log(abs(sys_params.C_t*Y - sys_params.ref(t))))
+stairs(t,log(abs(sys_params.C_t*Y - sys_params.ref(t))),"LineWidth",linewidth)
 ylabel("log|y_k - r_k|")
 set(gca,'XTickLabel',[])
 
@@ -43,7 +44,7 @@ y_impulse = lsim(G,u_impulse',0:length_impulse-1)';
 Delta_IR = zeros(1,nb_sample);
 Delta_DC = zeros(1,nb_sample);
 [num,den] = tfdata(G);
-DC = sum(num{1})/sum(den{1});
+DC = sum(num{1})/(sum(den{1})-1);
 for k=1:nb_sample
 G_hat = tf(Theta(n_est+1:end,k)',[1;Theta(1:n_est,k)]',1);
 y_hat_impulse = lsim(G_hat,u_impulse',0:length_impulse-1)';
@@ -53,12 +54,12 @@ Delta_DC(k) = abs(DC_hat - DC);
 end
 
 ax4 = subplot(6,1,4);
-stairs(t,log(Delta_IR))
+stairs(t,log(Delta_IR),"LineWidth",linewidth)
 ylabel("log||\Delta IR||")
 set(gca,'XTickLabel',[])
 
 ax5 = subplot(6,1,5);
-stairs(t,log(Delta_DC))
+stairs(t,log(Delta_DC),"LineWidth",linewidth)
 xlabel("k (step)")
 ylabel("log||\Delta DC||")
 
@@ -92,7 +93,28 @@ ax6 = subplot(6,1,6);
 % 
 % set(ax6, 'pos', p6);%set h1 position
 
-pzmap(G)
-hold on
-pzmap(G_hat)
+pzplot(G,G_hat)
 legend
+a=findobj(gca,'type','line');
+set(a(2),'LineWidth',linewidth);
+set(a(3),'LineWidth',linewidth);
+set(a(4),'LineWidth',linewidth);
+set(a(5),'LineWidth',linewidth);
+
+% Covariance matrix
+figure(3)
+for k=1:nb_sample
+    T(k) = trace(P(:,:,k));
+    D(k) = det(P(:,:,k));
+end
+subplot(2,1,1)
+semilogy(T,"LineWidth",linewidth)
+xlabel("k (step)")
+text = '$trace(P)$';
+ylabel(text,'Interpreter','latex','FontWeight','bold')
+subplot(2,1,2)
+semilogy(D,"LineWidth",linewidth)
+xlabel("k (step)")
+text = '$det(P)$';
+ylabel(text,'Interpreter','latex','FontWeight','bold')
+title("Trace and Determinant of the covariance matrix")

@@ -29,9 +29,9 @@ sys_params.D = 0;
 pcac_params.u_min = -1;pcac_params.u_max = 1;
 pcac_params.delta_u_min = -1;pcac_params.delta_u_max = 1;
 pcac_params.l = 50;
-pcac_params.Q_bar = 50*eye(pcac_params.l - 1);
+pcac_params.Q_bar = 50;%*eye(pcac_params.l - 1);
 pcac_params.P_bar = 50;
-pcac_params.R = 10*eye(pcac_params.l);
+pcac_params.R = 10;%*eye(pcac_params.l);
 
 % Initialization of Theta_0/P_0
 Theta_0 = 0.01;

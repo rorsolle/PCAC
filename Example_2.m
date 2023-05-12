@@ -9,7 +9,7 @@ rls_params.n_est = 2;
 rls_params.t_d = 10;
 rls_params.t_n = 2;
 rls_params.lambda = 1;
-rls_params.eta = 1;
+rls_params.eta = 0.9;
 rls_params.properties = ["Strictly proper"];
 
 n_est = rls_params.n_est;
@@ -31,16 +31,16 @@ pcac_params.u_max = 50;
 pcac_params.delta_u_min = -10;
 pcac_params.delta_u_max = 10;
 pcac_params.l = 20;
-pcac_params.Q_bar = 2*eye(pcac_params.l - 1);
+pcac_params.Q_bar = 2;%*eye(pcac_params.l - 1);
 pcac_params.P_bar = 5;
-pcac_params.R = 1*eye(pcac_params.l);
+pcac_params.R = 1;%*eye(pcac_params.l);
 
 % Initialization of Theta_0/P_0
-alpha = 1;
+alpha = -1;
 Theta_0 = alpha*[0,0,0,0,1]';
-Theta_0 = 0.1;
+%Theta_0 = 1;
 P_0 = 1000;
 
 % Standard deviation of the noise
-std_w = 0; % Input
+std_w = 1; % Input
 std_v = 0; % Output

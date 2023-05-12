@@ -19,7 +19,8 @@ sys_params.n_y = 1;
 sys_params.n_u = 1;
 n_y = sys_params.n_y;
 n_u = sys_params.n_u;
-sys_params.ref = @(t) 1.*ones(n_y,length(t));
+%sys_params.ref = @(t) 1.*ones(n_y,length(t));
+sys_params.ref = @(t) (t>=0).*(t<20) - (t>=20).*(t<40) + 3*(t>=40);%
 sys_params.C_t = 1;
 sys_params.C_c = 1;
 sys_params.C = 0;
@@ -31,9 +32,9 @@ pcac_params.u_max = 10;
 pcac_params.delta_u_min = -10;
 pcac_params.delta_u_max = 10;
 pcac_params.l = 5;
-pcac_params.Q_bar = 2*eye(pcac_params.l - 1);
+pcac_params.Q_bar = 2;%*eye(pcac_params.l - 1);
 pcac_params.P_bar = 5;
-pcac_params.R = 1*eye(pcac_params.l);
+pcac_params.R = 1;%*eye(pcac_params.l);
 
 % Initialization of Theta_0/P_0
 Theta_0 = 0.01;
