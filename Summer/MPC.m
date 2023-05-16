@@ -48,8 +48,11 @@ opts = optimset("Display","None");
 MPC = quadprog(H,zeros((N+1)*nx+N*nu,1),A_ineq,B_ineq,Aeq,Beq,LB,UB,[],opts);
 if isempty(MPC)
     u = zeros(nu,1);
+%     next_guess = [];
 else
     u = MPC((N+1)*nx+1:(N+1)*nx+nu);
+%     idx = [nx + (1:N*nx),(N*nx+1:(N+1)*nx),(N+1)*nx + nu + (1:(N-1)*nu),((N+1)*nx+(N-1)*nu+1:(N+1)*nx+N*nu)];
+%     next_guess = MPC(idx);
 end
 
 end

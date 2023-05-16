@@ -3,6 +3,8 @@ function [t,Y,U,Theta,P] = pcac(fun,Y,V,U,W,Theta,P,params)
 sat = @(x) min(max(x,params.pcac_params.u_min),params.pcac_params.u_max);
 t = 0:params.pcac_params.nb_sample-1;
 
+guess = [];
+
 ssG = ss(params.sys_params.tf);
 x0 = zeros(size(ssG.A,1),1);
 
@@ -32,7 +34,6 @@ else
 
 for k=1:params.pcac_params.nb_sample-1
     Y(:,k) = ssG.C*x0;
-    
     if k>params.rls_params.n_est
         u_pcac = fun(k, Y + V, U, Theta(:,k), params); %PCAC
         U(:,k) = sat(u_pcac);

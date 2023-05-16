@@ -25,8 +25,9 @@ for i=2:n_est
     x_hat_k(:,i) = x_hat_ik;
 end
 
-[A_k,B_k,C_k,D_k] = pcac_matrices_representation_1(theta,params);
-x_1k = A_k*reshape(x_hat_k,[],1) + B_k*U(:,idx);
+%[A_k,B_k,C_k,D_k] = pcac_matrices_representation_1(theta,params);
+%x_1k = A_k*reshape(x_hat_k,[],1) + B_k*U(:,idx);
+x_1k = reshape(x_hat_k,[],1);
 
 end
 

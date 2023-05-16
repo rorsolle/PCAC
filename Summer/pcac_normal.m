@@ -48,8 +48,8 @@ A_tilde = [A_k                        , zeros(n_y*n_est,n_r) , B_k              
            zeros(n_u*n_est,n_y*n_est) , zeros(n_u*n_est,n_r) , eye(n_u*n_est)       , zeros(n_u*n_est,n_r);
            zeros(n_r,n_y*n_est)       , zeros(n_r,n_r)       , zeros(n_r,n_u*n_est) , eye(n_r,n_r)];
 
-B_tilde = [zeros(n_y*n_est,n_u*n_est);
-           zeros(n_r,n_u*n_est);
+B_tilde = [B_k;%zeros(n_y*n_est,n_u*n_est);
+            C_t*C_k*B_k;%zeros(n_r,n_u*n_est);
            eye(n_u*n_est);
            zeros(n_r,n_u*n_est)];
 
