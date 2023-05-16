@@ -13,12 +13,26 @@ Example_1 % Working
 %% PCAC + RLS
 tic
 
-[t,Y,U,Theta,P] = pcac(@pcac_rate_based,Y,V,U,W,Theta,P,params);
-%[t,Y,U,Theta,P] = pcac(@pcac_normal,Y,V,U,W,Theta,P,params);
-%[t,Y,U,Theta,P] = pcac(@pcac_disturbance,Y,V,U,W,Theta,P,params);
-%[t,Y,U,Theta,P] = pcac(@pcac_paper,Y,V,U,W,Theta,P,params);
+fun = @pcac_normal;
+%fun = @pcac_disturbance;
+%fun = @pcac_paper;
+%fun = @pcac_rate_based;
+
+[t,Y,U,Theta,P] = pcac(fun,Y,V,U,W,Theta,P,params);
 
 toc
-plot_results(t,Y,U,Theta,P,params)
+
+switch func2str(fun)
+    case "pcac_normal"
+        approach = "Normal Approach";
+    case "pcac_disturbance"
+        approach = "Disturbance Approach";
+    case "pcac_paper"
+        approach = "Paper Approach";
+    case "pcac_rate_based"
+        approach = "Rate-based Approach";
+end
+
+plot_results(t,Y,U,Theta,P,params,approach)
 %  profile off
 %  profile viewer

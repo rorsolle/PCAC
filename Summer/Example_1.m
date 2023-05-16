@@ -33,7 +33,7 @@ sys_params.std_w = 0; % Input
 sys_params.std_v = 0; % Output
 
 %% PCAC
-pcac_params.nb_sample = 100;
+pcac_params.nb_sample = 60;
 
 pcac_params.u_min = -10;
 pcac_params.u_max = 10;

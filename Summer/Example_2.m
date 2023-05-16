@@ -30,11 +30,11 @@ sys_params.C = 0;
 sys_params.D = 0;
 
 % Standard deviation of the noise
-sys_params.std_w = 0.1; % Input
+sys_params.std_w = 0; % Input
 sys_params.std_v = 0; % Output
 
 %% PCAC
-pcac_params.nb_sample = 100;
+pcac_params.nb_sample = 50;
 
 pcac_params.u_min = -50;
 pcac_params.u_max = 50;
@@ -43,7 +43,7 @@ pcac_params.delta_u_max = 10;
 pcac_params.l = 20;
 pcac_params.Q_bar = 2;%*eye(pcac_params.l - 1);
 pcac_params.P_bar = 5;
-pcac_params.R = 0.001;%*eye(pcac_params.l);
+pcac_params.R = 1;%*eye(pcac_params.l);
 
 %%
 params.sys_params = sys_params;

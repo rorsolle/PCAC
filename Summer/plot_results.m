@@ -1,4 +1,4 @@
-function [] = plot_results(t,Y,U,Theta,P,params,nb_sample)
+function [] = plot_results(t,Y,U,Theta,P,params,approach)
 sys_params = params.sys_params;
 rls_params = params.rls_params;
 pcac_params = params.pcac_params;
@@ -31,6 +31,7 @@ hold on
 stairs(t,sys_params.ref(t),"--k","LineWidth",linewidth)
 ylabel("Output")
 set(gca,'XTickLabel',[])
+title(approach,"FontSize",14)
 
 ax2 = subplot(6,1,2);
 stairs(t,U,"LineWidth",linewidth)
