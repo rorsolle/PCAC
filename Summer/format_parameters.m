@@ -15,10 +15,13 @@ num=num{1};den=den{1};
 sys_params.theta_ref = [den(2:end),num]'; 
 
 assert(rls_params.n_est>0)
-assert(rls_params.lambda>0)
-assert(rls_params.eta>0)
 
-assert(rls_params.t_n<rls_params.t_d)
+if isfield(rls_params,"lambda")
+    assert(rls_params.lambda>0)
+else
+    assert(rls_params.eta>0)
+    assert(rls_params.t_n<rls_params.t_d)
+end
 
 assert(all(size(sys_params.C_t) == [size(sys_params.ref(0),1), sys_params.n_y]))
 

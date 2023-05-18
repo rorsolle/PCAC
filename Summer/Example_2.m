@@ -10,6 +10,7 @@ rls_params.n_est = 2;
 % Initialization of Theta_0/P_0
 alpha = 1;
 rls_params.Theta_0 = alpha*[zeros(1,2*rls_params.n_est),1]';
+%rls_params.Theta_0 = 1*randn(2*rls_params.n_est+1,1);
 rls_params.P_0 = 1000;
 
 rls_params.t_d = 10;
@@ -23,7 +24,7 @@ rls_params.properties = ["Strictly proper"];
 sys_params.tf = G;
 sys_params.ref = @(t) 1.*ones(1,length(t));
 %sys_params.ref = @(t) (t>=0).*(t<20) - (t>=20).*(t<40) + 3*(t>=40);%
-sys_params.ref = @(t) sin(t/20);%
+%sys_params.ref = @(t) sin(t/20);%
 sys_params.C_t = 1;
 sys_params.C_c = 1;
 sys_params.C = 0;
@@ -34,7 +35,7 @@ sys_params.std_w = 0; % Input
 sys_params.std_v = 0; % Output
 
 %% PCAC
-pcac_params.nb_sample = 50;
+pcac_params.nb_sample = 100;
 
 pcac_params.u_min = -50;
 pcac_params.u_max = 50;

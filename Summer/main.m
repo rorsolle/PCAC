@@ -4,19 +4,20 @@ clear; close all;
 %% Load parameters, model and data
 %Example_S_5 % Working
 %Example_S_6 % Working
-Example_1 % Working
+%Example_1 % Working
 %Example_2 % Not working
-%Example_3 % Not working
+Example_3 % Not working
 
 [Y,U,V,W,Theta,P] = initialize_data(params);
 
-%% PCAC + RLS
+%% PCAC + RL
 tic
 
-fun = @pcac_normal;
+%fun = @pcac_normal;
 %fun = @pcac_disturbance;
 %fun = @pcac_paper;
-%fun = @pcac_rate_based;
+%fun = @pcac_paper_test;
+fun = @pcac_rate_based;
 
 [t,Y,U,Theta,P] = pcac(fun,Y,V,U,W,Theta,P,params);
 
@@ -29,6 +30,8 @@ switch func2str(fun)
         approach = "Disturbance Approach";
     case "pcac_paper"
         approach = "Paper Approach";
+    case "pcac_paper_test"
+        approach = "Paper Test Approach";
     case "pcac_rate_based"
         approach = "Rate-based Approach";
 end

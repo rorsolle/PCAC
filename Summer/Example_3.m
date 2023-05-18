@@ -20,8 +20,8 @@ rls_params.properties = ["Strictly proper"];
 
 %% System
 sys_params.tf = G;
-sys_params.ref = @(t) 1.*ones(1,length(t));
-%sys_params.ref = @(t) (t>=0).*(t<20) - (t>=20).*(t<40) + 3*(t>=40);%
+%sys_params.ref = @(t) 1.*ones(1,length(t));
+sys_params.ref = @(t) (t>=0).*(t<100) - (t>=100).*(t<200) + 2*(t>=200);%
 sys_params.C_t = 1;
 sys_params.C_c = 1;
 sys_params.C = 0;
@@ -29,10 +29,10 @@ sys_params.D = 0;
 
 % Standard deviation of the noise
 sys_params.std_w = 0; % Input
-sys_params.std_v = 0; % Output
+sys_params.std_v = 0.02; % Output
 
 %% PCAC
-pcac_params.nb_sample = 100;
+pcac_params.nb_sample = 300;
 
 pcac_params.u_min = -50;
 pcac_params.u_max = 50;

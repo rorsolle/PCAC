@@ -47,7 +47,7 @@ ylabel("log|y_k - r_k|")
 set(gca,'XTickLabel',[])
 
 % Impulse response and DC
-length_impulse = 100;
+length_impulse = 30;
 u_impulse = zeros(sys_params.n_u,length_impulse);
 u_impulse(:,1) = 1;
 y_impulse = lsim(sys_params.tf,u_impulse',0:length_impulse-1)';

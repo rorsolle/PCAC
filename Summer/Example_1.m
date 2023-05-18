@@ -11,16 +11,16 @@ rls_params.n_est = 2;
 rls_params.Theta_0 = 0.01;
 rls_params.P_0 = 1000;
 
-rls_params.t_d = 10;
-rls_params.t_n = 2;
+rls_params.t_d = 20;
+rls_params.t_n = 5;
 
 rls_params.lambda = 1;
-rls_params.eta = 1;
+rls_params.eta = 0.9;
 rls_params.properties = ["Strictly proper"];
 
 %% System
 sys_params.tf = G;
-sys_params.ref = @(t) 1.*ones(1,length(t));
+%sys_params.ref = @(t) 1.*ones(1,length(t));
 sys_params.ref = @(t) (t>=0).*(t<20) - (t>=20).*(t<40) + 3*(t>=40);%
 %sys_params.ref = @(t) sin(t/20);%
 sys_params.C_t = 1;

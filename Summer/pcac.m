@@ -18,7 +18,7 @@ if strcmp(func2str(fun),'pcac_disturbance')
    
     if k>params.rls_params.n_est
         [u_pcac,x_hat,dist] = fun(k, Y + V, U, Theta(:,k),Dist(:,k), x_hat, params); %PCAC
-        U(:,k) = sat(u_pcac);
+        U(:,k) = u_pcac;
         Dist(:,k+1) = dist;
     end
     [Theta,P] = rls_code(k, Y + V, U, P, Theta, params); %RLS

@@ -15,13 +15,13 @@ B_k = zeros(n_y*n_est,n_u);
 C_k = zeros(n_y,n_y*n_est);
 D_k = theta_mat(:,n_y*n_est+1:n_y*n_est+n_u);
 
+G_0 = theta_mat(1:n_y,n_est*n_y+1:n_est*n_y+n_u);
 for k=1:n_est
     F_k = theta_mat(1:n_y,(k-1)*n_y+1:k*n_y);
-    G_k = theta_mat(1:n_y,n_est*n_y+(k-1)*n_u+1:n_est*n_y+k*n_u);
-    G_k_1 = theta_mat(1:n_y,n_est*n_y+k*n_u+1:n_est*n_y+(k+1)*n_u);
+    G_k = theta_mat(1:n_y,n_est*n_y+k*n_u+1:n_est*n_y+(k+1)*n_u);
 
     A_k((k-1)*n_y+1:k*n_y,1:n_y) = -F_k;
-    B_k((k-1)*n_y+1:k*n_y,1:n_u) = G_k_1 - F_k*G_k;
+    B_k((k-1)*n_y+1:k*n_y,1:n_u) = G_k - F_k*G_0;
 end
 
 A_k = A_k + [zeros(n_y*(n_est-1),n_y),eye(n_y*(n_est-1));zeros(n_y,n_y*n_est)];
