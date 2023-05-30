@@ -10,14 +10,14 @@ x0 = zeros(2,1);
 x0 = [0;0]; % Initial condition
 
 %% Recursive Least Squares (RLS) parameters 
-rls_params.n_est = 4;
+rls_params.n_est = 3;
 
 % Initialization of Theta_0/P_0
-rls_params.Theta_0 = 0.1;
-rls_params.P_0 = 100;
+rls_params.Theta_0 = 0.01;
+rls_params.P_0 = 1000;
 
 % Lambda parameters (specificy if you don't use VRF) 
-rls_params.lambda = 0.85;
+rls_params.lambda = 0.9;
 
 % VRF parameters (DO NOT specify lambda)
 rls_params.t_d = 20; 
@@ -42,8 +42,8 @@ sys_params.Ts = Ts;
 % Reference trajectory
 %sys_params.ref = @(t) [pi].*ones(1,length(t));
 %sys_params.ref = @(t) (t>=0).*(t<100) - (t>=100).*(t<200);%
-%sys_params.ref = @(t) 0.2*sin(t/20);%
-sys_params.ref = @(t) pi*(t>0);
+sys_params.ref = @(t) pi*(sin(t/20)>0);%
+%sys_params.ref = @(t) pi*(t>0);
 sys_params.C_t = [1,0]; % Tracking output
 
 % C x C_c x Y + D <= 0
@@ -56,24 +56,24 @@ sys_params.std_w = 0; % Input
 sys_params.std_v = 0; % Output
 
 %% Predictive Cost Adaptive Control (PCAC) parameters
-pcac_params.nb_sample = 200;
+pcac_params.nb_sample = 400;
 
 % Input constraints
-pcac_params.u_min = -0.5;
-pcac_params.u_max = 0.5;
-pcac_params.delta_u_min = -4*Ts;
-pcac_params.delta_u_max = 4*Ts;
+pcac_params.u_min = -2;
+pcac_params.u_max = 2;
+pcac_params.delta_u_min = -inf*Ts;
+pcac_params.delta_u_max = inf*Ts;
 
 pcac_params.l = 20; % Horizon
 
 % Tracking error cost
-pcac_params.Q_bar = 0/40*eye(size(sys_params.C_t,1));%*eye(pcac_params.l - 1);
+pcac_params.Q_bar = 2*eye(size(sys_params.C_t,1));%*eye(pcac_params.l - 1);
 
 % Terminal tracking error cost
 pcac_params.P_bar = 5*eye(size(sys_params.C_t,1));
 
 % Rate input cost
-pcac_params.R = 0*eye(sys_params.n_u);%*eye(pcac_params.l);
+pcac_params.R = 0.01*eye(sys_params.n_u);%*eye(pcac_params.l);
 
 %%
 params.sys_params = sys_params;

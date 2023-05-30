@@ -48,11 +48,8 @@ sys_params.x0 = x0;
 sys_params.Ts = Ts;
 
 % Reference trajectory
-sys_params.ref = @(t) 0.*ones(1,length(t));
-%sys_params.ref = @(t) (t>=0).*(t<100) - (t>=100).*(t<200);%
-%sys_params.ref = @(t) 0.2*sin(t/20);%
-%sys_params.ref = @(t) 3*(sin(t/20)>0);%
-sys_params.C_t = [0,1,0,0]; % Tracking output
+sys_params.ref = @(t) x0.*ones(1,length(t));
+sys_params.C_t = eye(4); % Tracking output
 
 % C x C_c x Y + D <= 0
 sys_params.C_c = [0,0,0,0]; % Constraint output
@@ -72,7 +69,7 @@ pcac_params.u_max = [deg2rad(20);inf];
 pcac_params.delta_u_min = Ts*[-deg2rad(50);-50];
 pcac_params.delta_u_max = Ts*[deg2rad(50);50];
 
-pcac_params.l = 40; % Horizon
+pcac_params.l = 10; % Horizon
 % Tracking error cost
 pcac_params.Q_bar = 1*diag(1./[30-5, ...               % V
                                deg2rad(60-(-60)), ...  % Gamma

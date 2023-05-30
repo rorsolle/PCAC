@@ -55,7 +55,7 @@ sys_params.C = 0;
 sys_params.D = 0;
 
 % Standard deviation of the noise
-sys_params.std_w = 0.1; % Input
+sys_params.std_w = 0; % Input
 sys_params.std_v = 0; % Output
 
 %% Predictive Cost Adaptive Control (PCAC) parameters

@@ -3,14 +3,14 @@ clear; %close all;
 
 %% Load parameters, model and data
 
-cd Examples
+cd .\Examples
 
 %Example_S_5
 %Example_S_6
-Example_1 
+%Example_1 
 %Example_2
 %Example_3
-%Example_single_pendulum
+Example_single_pendulum
 %Example_double_pendulum
 %Example_deep_stall
  
@@ -25,8 +25,8 @@ tic
 
 % Choose your algorithm
 
-%fun = @pcac_paper;
-fun = @pcac_rate_based;
+fun = @pcac_paper;
+%fun = @pcac_rate_based;
 
 % PCAC
 [t,Y,U,Theta,P] = pcac(fun,Y,V,U,W,Theta,P,params);
