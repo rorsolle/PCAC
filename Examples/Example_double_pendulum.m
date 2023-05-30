@@ -92,5 +92,3 @@ pcac_params.R = 1*diag(1./[1, ... % Torque 1
 params.sys_params = sys_params;
 params.rls_params = rls_params;
 params.pcac_params = pcac_params;
-
-params = format_parameters(params);

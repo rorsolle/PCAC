@@ -79,5 +79,3 @@ pcac_params.R = 0*eye(sys_params.n_u);%*eye(pcac_params.l);
 params.sys_params = sys_params;
 params.rls_params = rls_params;
 params.pcac_params = pcac_params;
-
-params = format_parameters(params);
