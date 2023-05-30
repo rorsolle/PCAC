@@ -7,10 +7,11 @@ n_est = params.rls_params.n_est;
 %x_1 = one_step_prediction(idx, Y, U, theta, params);
 x_1 = Y(:,idx:-1:idx-n_est+1)';
 
-U_k = U(:,idx-1:-1:idx-n_est)';
+U_k = U(:,idx:-1:idx-n_est+1)';
 
 %% PCAC matrices from Theta
 [A_k,B_k,C_k,D_k] = pcac_matrices_representation_2(theta,params);
+x_1 = A_k*x_1 + B_k*U_k;
 
 %% PCAC parameters
 pcac_params = params.pcac_params;
@@ -67,17 +68,17 @@ B_ineq_u = 0;
 lb_x = [-inf+zeros(n_y*n_est,1);
         -inf+zeros(n_r,1);
         -inf+zeros(n_r,1);
-        u_min*ones(n_est*n_u,1)
-       ];
+        kron(ones(n_est,1),u_min)
+        ];
 
 ub_x = [inf+zeros(n_y*n_est,1);
         inf+zeros(n_r,1);
         inf+zeros(n_r,1)
-        u_max*ones(n_est*n_u,1)
+        kron(ones(n_est,1),u_max)
         ];
 
-lb_u = delta_u_min*ones(n_est*n_u,1);
-ub_u = delta_u_max*ones(n_est*n_u,1);
+lb_u = kron(ones(n_est,1),delta_u_min);
+ub_u = kron(ones(n_est,1),delta_u_max);
 
 x0 = [x_1;C_t*C_k*x_1-r_kl;r_kl;U_k];
 
@@ -106,5 +107,5 @@ u = MPC(A_tilde,B_tilde,C_tilde, ...
     is_ordered_input, ...
     is_diff_input);
 
-u_pcac = U(:,idx-1) + u(1);
+u_pcac = U(:,idx) + u(1);
 end

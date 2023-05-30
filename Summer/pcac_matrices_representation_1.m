@@ -1,5 +1,5 @@
 function [A_k,B_k,C_k,D_k] = pcac_matrices_representation_1(theta,params)
-% Representation equation (23)->(31)
+% Representation equations 27,28
 
 sys_params = params.sys_params;
 n_y = sys_params.n_y;

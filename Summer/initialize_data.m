@@ -1,4 +1,5 @@
 function [Y,U,V,W,Theta,P] = initialize_data(params)
+% Initialization of datasets
 
 sys_params = params.sys_params;
 rls_params = params.rls_params;

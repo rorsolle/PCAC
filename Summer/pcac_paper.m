@@ -3,7 +3,7 @@ function u_pcac = pcac_paper(idx, Y, U, theta, params)
 %% Compute x_1|k and u_k = U(k)
 x_1 = one_step_prediction(idx, Y, U, theta, params);
 
-u_k = U(:,idx-1);
+u_k = U(:,idx);
 
 %% PCAC matrices from Theta
 [A_k,B_k,C_k,D_k] = pcac_matrices_representation_1(theta,params);
@@ -35,19 +35,21 @@ rls_params = params.rls_params;
 n_est = rls_params.n_est;
 
 %% Gamma and T
-% X = [x , err  , U, ref]
+% X = [x , err  , ref, U]
 % X(k+1) = A_tilde X(k) + B_tilde Delta U 
 % y(k) = C_tilde X(k)
 
-A_tilde = [A_k                        , zeros(n_y*n_est,n_r) , B_k                  , zeros(n_y*n_est,n_r);
-           C_t*C_k*A_k                , zeros(n_r)           , C_t*C_k*B_k          , -eye(n_r);
-           zeros(n_u,n_y*n_est)       , zeros(n_u,n_r)       , eye(n_u)             , zeros(n_u,n_r);
-           zeros(n_r,n_y*n_est)       , zeros(n_r,n_r)       , zeros(n_r,n_u)       , eye(n_r,n_r)];
+A_tilde = [A_k                        , zeros(n_y*n_est,n_r) , zeros(n_y*n_est,n_r) , B_k ;
+           C_t*C_k*A_k                , zeros(n_r)           , -eye(n_r)            , C_t*C_k*B_k;
+           zeros(n_r,n_y*n_est)       , zeros(n_r,n_r)       , eye(n_r,n_r)         , zeros(n_r,n_u);
+           zeros(n_u,n_y*n_est)       , zeros(n_u,n_r)       , zeros(n_u,n_r)       , eye(n_u);
+          ];
 
-B_tilde = [B_k;%zeros(n_y*n_est,n_u);
-            C_t*C_k*B_k;%zeros(n_r,n_u);
+B_tilde = [B_k;%zeros(n_y*n_est,n_u*n_est);
+           C_t*C_k*B_k;%zeros(n_r,n_u*n_est);
+           zeros(n_r,n_u);
            eye(n_u);
-           zeros(n_r,n_u)];
+           ];
 
 C_tilde = C_k*[eye(n_y*n_est),zeros(n_y*n_est,n_r+n_u+n_r)];
 
@@ -60,30 +62,30 @@ B_ineq_u = 0;
 
 lb_x = [-inf+zeros(n_y*n_est,1);
         -inf+zeros(n_r,1);
-        u_min*ones(n_u,1);
-        -inf+zeros(n_r,1)];
+        -inf+zeros(n_r,1);
+        u_min;    
+        ];
 
 ub_x = [inf+zeros(n_y*n_est,1);
         inf+zeros(n_r,1);
-        u_max*ones(n_u,1);
-        inf+zeros(n_r,1)];
+        inf+zeros(n_r,1)
+        u_max;
+        ];
 
-lb_u = delta_u_min*ones(n_u,1);
-ub_u = delta_u_max*ones(n_u,1);
+lb_u = delta_u_min;
+ub_u = delta_u_max;
 
-x0 = [x_1;C_t*C_k*x_1-r_kl;u_k;r_kl];
+x0 = [x_1;C_t*C_k*x_1-r_kl;r_kl;u_k];
 
 Q = blkdiag(zeros(n_y*n_est), ...
             Q_bar, ...
-            zeros(n_u), ...
-            zeros(n_r));
+            zeros(n_r), ...
+            zeros(n_u));
 
 P = blkdiag(zeros(n_y*n_est), ...
             P_bar, ...
-            zeros(n_u), ...
-            zeros(n_r));
-
-R = diag(R/n_est*ones(1,1));
+            zeros(n_r), ...
+            zeros(n_u));
 
 is_ordered_input  = 0;
 is_diff_input = 0;
@@ -99,7 +101,7 @@ u = MPC(A_tilde,B_tilde,C_tilde, ...
     is_ordered_input, ...
     is_diff_input);
 
-u_pcac = U(:,idx-1) + u;
+u_pcac = U(:,idx) + u;
 
 end
 

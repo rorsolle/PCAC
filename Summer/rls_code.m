@@ -12,7 +12,7 @@ n_y = sys_params.n_y;
 n_u = sys_params.n_u;
 
 if isfield(rls_params,"properties") && any("Strictly proper"==rls_params.properties)
-    Theta(n_y*n_est+1:n_y*n_est+n_u,:) = 0; %Set G_0 to 0
+    Theta(n_y*n_y*n_est+1:n_y*n_y*n_est+n_y*n_u,:) = 0; %Set G_0 to 0
 end
 
 % Without VRF
@@ -58,7 +58,7 @@ else
 end
 
 if isfield(rls_params,"properties") && any("Strictly proper"==rls_params.properties)
-    Theta(n_y*n_est+1:n_y*n_est+n_u,:) = 0;
+    Theta(n_y*n_y*n_est+1:n_y*n_y*n_est+n_y*n_u,:) = 0;
 end
 
 

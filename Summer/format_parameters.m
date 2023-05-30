@@ -1,18 +1,30 @@
 function params = format_parameters(params)
+% Check consistency of parameters
 
 sys_params = params.sys_params;
 rls_params = params.rls_params;
 pcac_params = params.pcac_params;
 
+if params.sys_params.sys_type == "LTI"
+    % Number of I/O from a LTI system
+     sys_params.n_u = size(sys_params.tf.InputDelay,1);
+     sys_params.n_y = size(sys_params.tf.OutputDelay,1);
+    
+    % Theta reference (works only for SISO system)
+    [num,den] = tfdata(sys_params.tf);
+    num=num{1};den=den{1};
+    sys_params.theta_ref = [den(2:end),num]'; 
 
-sys_params.n_u = size(sys_params.tf.InputDelay,2);
-sys_params.n_y = size(sys_params.tf.OutputDelay,2);
-params.nb_var = rls_params.n_est*sys_params.n_y*(sys_params.n_u+sys_params.n_y) +... 
-                sys_params.n_u*sys_params.n_y; %Size of theta
+else
+    sys_params.theta_ref = [];
+end
 
-[num,den] = tfdata(sys_params.tf);
-num=num{1};den=den{1};
-sys_params.theta_ref = [den(2:end),num]'; 
+% Size of Theta
+params.nb_var = rls_params.n_est*sys_params.n_y*sys_params.n_y +... % F_1,...,F_n
+                sys_params.n_u*sys_params.n_y +...                  % G_0
+                rls_params.n_est*sys_params.n_y*sys_params.n_u;     % G_1,...,G_n
+
+%% Checks
 
 assert(rls_params.n_est>0)
 

@@ -1,4 +1,5 @@
 function phi = compute_phi(Y, U, idx, params)
+% Compute phi(k) = [-y(k-1)^T,...,-y(k-nhat)^T,u(k)^T,...,u(k-n)^T] x I_p
 
 sys_params = params.sys_params;
 n_y = sys_params.n_y;
