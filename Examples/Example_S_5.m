@@ -42,10 +42,9 @@ pcac_params.l = 50;
 pcac_params.Q_bar = 50;%*eye(pcac_params.l - 1);
 pcac_params.P_bar = 50;
 pcac_params.R = 10;%*eye(pcac_params.l);
+pcac_params.S = [];
 
 %%
 params.sys_params = sys_params;
 params.rls_params = rls_params;
 params.pcac_params = pcac_params;
-
-params = format_parameters(params);

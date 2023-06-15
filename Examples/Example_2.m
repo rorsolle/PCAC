@@ -50,7 +50,7 @@ sys_params.ref = @(t) 1.*ones(1,length(t));
 sys_params.C_t = 1; % Tracking output
 
 % C x C_c x Y + D <= 0
-sys_params.C_c = 1; % Constraint output
+sys_params.C_c = 0; % Constraint output
 sys_params.C = 0;
 sys_params.D = 0;
 
@@ -71,6 +71,7 @@ pcac_params.l = 20;
 pcac_params.Q_bar = 2; % Tracking error cost
 pcac_params.P_bar = 5; % Terminal tracking error cost
 pcac_params.R = 1; % Rate input cost
+pcac_params.S = [];%*eye(size(sys_params.C,1)); % Rate input cost
 
 %%
 params.sys_params = sys_params;

@@ -52,7 +52,7 @@ B_tilde = [B_k;
            zeros(n_y*n_est,n_u);
            eye(n_u)];
 
-C_tilde = C_k*[zeros(n_y*n_est),zeros(n_y*n_est,n_y),eye(n_y*n_est),zeros(n_y*n_est,n_u)];
+C_tilde = C_k*[zeros(n_y*n_est),zeros(n_y*n_est,n_r),eye(n_y*n_est),zeros(n_y*n_est,n_u)];
 
 A_ineq_y = C*C_c;
 B_ineq_y = -D;

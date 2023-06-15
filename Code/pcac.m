@@ -33,7 +33,6 @@ if strcmp(func2str(fun),'pcac_disturbance')
 [Theta,P] = rls_code(k+1, Y + V, U, P, Theta, params); %RLS
 
 else
-
 for k=1:params.pcac_params.nb_sample-1
     Y(:,k) = measure_fct(t(k),x,U(:,k)+W(:,k),params) + V(:,k);
 

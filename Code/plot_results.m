@@ -113,24 +113,6 @@ if sys_params.sys_type == "LTI"
     set(a(3),'LineWidth',linewidth);
     set(a(4),'LineWidth',linewidth);
     set(a(5),'LineWidth',linewidth);
-    
-    % Covariance matrix
-    figure(3)
-    for k=1:pcac_params.nb_sample
-        T(k) = trace(P(:,:,k));
-        D(k) = det(P(:,:,k));
-    end
-    subplot(2,1,1)
-    semilogy(T,"LineWidth",linewidth)
-    xlabel("k (step)")
-    text = '$trace(P)$';
-    ylabel(text,'Interpreter','latex','FontWeight','bold')
-    subplot(2,1,2)
-    semilogy(D,"LineWidth",linewidth)
-    xlabel("k (step)")
-    text = '$det(P)$';
-    ylabel(text,'Interpreter','latex','FontWeight','bold')
-    title("Trace and Determinant of the covariance matrix")
 
 else
     figure(2)
@@ -156,3 +138,22 @@ else
     set(gca,'XTickLabel',[])
     
 end
+
+% Covariance matrix
+figure(3)
+for k=1:pcac_params.nb_sample
+    T(k) = trace(P(:,:,k));
+    D(k) = det(P(:,:,k));
+end
+
+subplot(2,1,1)
+semilogy(T,"LineWidth",linewidth)
+xlabel("k (step)")
+text = '$trace(P)$';
+ylabel(text,'Interpreter','latex','FontWeight','bold')
+subplot(2,1,2)
+semilogy(D,"LineWidth",linewidth)
+xlabel("k (step)")
+text = '$det(P)$';
+ylabel(text,'Interpreter','latex','FontWeight','bold')
+title("Trace and Determinant of the covariance matrix")

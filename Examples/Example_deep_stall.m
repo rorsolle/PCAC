@@ -86,6 +86,7 @@ pcac_params.P_bar = 5*diag(1./[30-5, ...               % V
 % Rate input cost
 pcac_params.R = 1*diag(1./[deg2rad(20-(-60)), ... % Eta
                            100]).^2;              % T
+pcac_params.S = [];%10*eye(size(sys_params.C,1));%*eye(pcac_params.l);
 
 %%
 params.sys_params = sys_params;

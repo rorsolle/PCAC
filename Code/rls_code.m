@@ -17,23 +17,11 @@ end
 
 % Without VRF
 if isfield(rls_params,"lambda")
-    if (idx - n_est > 0)
-        lambda = rls_params.lambda;
-        phi_k = compute_phi(Y, U, idx, params);
-        z_k = Y(:,idx) - phi_k*Theta(:,idx);
-    
-        L_k = 1/lambda*P(:,:,idx);
-        P(:,:,idx+1) = L_k - L_k*phi_k'*inv(eye(n_y) + phi_k*L_k*phi_k')*phi_k*L_k;
-        Theta(:,idx+1) = Theta(:,idx) + P(:,:,idx+1)*phi_k'*z_k;
-
-    else
-        P(:,:,idx+1) = P(:,:,idx);
-        Theta(:,idx+1) = Theta(:,idx);
-    end
+    lambda = rls_params.lambda;
 
 % With VRF
 else
-    if idx - n_est - t_d > 0
+    if idx - t_d > 0
         Z = zeros(n_y,t_d+1);
         count = 0;
         for k=idx-t_d:idx
@@ -43,19 +31,17 @@ else
         end
         g = vrf(Z,params);
         lambda = 1/(1+eta*g*(g>=0));
-    
-        z_k = Z(:,end);
-
-        L_k = 1/lambda*P(:,:,idx);
-        P(:,:,idx+1) = L_k - L_k*phi_k'*inv(eye(n_y) + phi_k*L_k*phi_k')*phi_k*L_k;
-        Theta(:,idx+1) = Theta(:,idx) + P(:,:,idx+1)*phi_k'*z_k;
-
-    
     else
-        P(:,:,idx+1) = P(:,:,idx);
-        Theta(:,idx+1) = Theta(:,idx);
+        lambda = 1;
     end
 end
+
+phi_k = compute_phi(Y, U, idx, params);
+z_k = Y(:,idx) - phi_k*Theta(:,idx);
+
+L_k = 1/lambda*P(:,:,idx);
+P(:,:,idx+1) = L_k - L_k*phi_k'*((eye(n_y) + phi_k*L_k*phi_k')\phi_k*L_k);
+Theta(:,idx+1) = Theta(:,idx) + P(:,:,idx+1)*phi_k'*z_k;
 
 if isfield(rls_params,"properties") && any("Strictly proper"==rls_params.properties)
     Theta(n_y*n_y*n_est+1:n_y*n_y*n_est+n_y*n_u,:) = 0;

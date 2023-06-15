@@ -17,7 +17,7 @@ rls_params.Theta_0 = 0.01;
 rls_params.P_0 = 1000;
 
 % Lambda parameters (specificy if you don't use VRF) 
-rls_params.lambda = 1;
+%rls_params.lambda = 1;
 
 % VRF parameters (DO NOT specify lambda)
 rls_params.t_d = 20; 
@@ -70,6 +70,7 @@ pcac_params.l = 5; % Horizon
 pcac_params.Q_bar = 2; % Tracking error cost
 pcac_params.P_bar = 5; % Terminal tracking error cost
 pcac_params.R = 1; % Rate input cost
+pcac_params.S = []; % Rate input cost
 
 %%
 params.sys_params = sys_params;

@@ -17,34 +17,16 @@ g = @(t,x,u) ?; % Column vector
 % Initial condition
 x0 = ?; % Column vector
 
-%% Recursive Least Squares (RLS) parameters 
-rls_params.n_est = ?; %nhat
-
-% Initialization of Theta_0/P_0
-rls_params.Theta_0 = ?; % Scalar or column vector
-rls_params.P_0 = ?; % Scalar or matrix
-
-% Lambda parameters (specificy if you don't use VRF) 
-rls_params.lambda = ?; % 1 >= Scalar > 0
-
-% VRF parameters (DO NOT specify lambda)
-rls_params.t_d = ?; % int > 0
-rls_params.t_n = ?; % int > 0
-rls_params.eta = ?; % scalar >= 0
-
-% Hypothesis on the estimated system
-rls_params.properties = ["Strictly proper"];
-
 %% System parameters
 sys_params.sys_type = ?; %"LTI" or "NL"
 
 % If LTI
-sys_params.tf = ?;
-sys_params.ss = ?;
+sys_params.tf = G;
+sys_params.ss = ss;
 
 % If NL
-sys_params.f = ?;
-sys_params.g = ?;
+sys_params.f = f;
+sys_params.g = g;
 sys_params.n_y = ?; % Number of outputs
 sys_params.n_u = ?; % Number of inputs
 
@@ -64,6 +46,24 @@ sys_params.D = ?;
 sys_params.std_w = ?; % Input (scalar or matrix >= 0 )
 sys_params.std_v = ?; % Output (scalar or matrix >= 0)
 
+%% Recursive Least Squares (RLS) parameters 
+rls_params.n_est = ?; %nhat
+
+% Initialization of Theta_0/P_0
+rls_params.Theta_0 = ?; % Scalar or column vector
+rls_params.P_0 = ?; % Scalar or matrix
+
+% Lambda parameters (specificy if you don't use VRF) 
+rls_params.lambda = ?; % 1 >= Scalar > 0
+
+% VRF parameters (DO NOT specify lambda)
+rls_params.t_d = ?; % int > 0
+rls_params.t_n = ?; % int > 0
+rls_params.eta = ?; % scalar >= 0
+
+% Hypothesis on the estimated system
+rls_params.properties = ["Strictly proper"];
+
 %% Predictive Cost Adaptive Control (PCAC) parameters
 pcac_params.nb_sample = ?; % Int > 0
 
@@ -74,9 +74,10 @@ pcac_params.delta_u_min = ?; % Scalar
 pcac_params.delta_u_max = ?; % Scalar
 
 pcac_params.l = ?; % Horizon  % int > 0
-pcac_params.Q_bar = 2; % Tracking error cost % Scalar >= 0 for 1-dim error, matrix >=0 for n-dim error
-pcac_params.P_bar = 5; % Terminal tracking error cost  % Scalar >= 0 for 1-dim error, matrix >= 0 for n-dim error
-pcac_params.R = 1; % Rate input cost  % Scalar >= 0 for 1-dim input, matrix >= 0 for n-dim input
+pcac_params.Q_bar = ?; % Tracking error cost % Scalar >= 0 for 1-dim error, matrix >=0 for n-dim error
+pcac_params.P_bar = ?; % Terminal tracking error cost  % Scalar >= 0 for 1-dim error, matrix >= 0 for n-dim error
+pcac_params.R = ?; % Rate input cost  % Scalar >= 0 for 1-dim input, matrix >= 0 for n-dim input
+pcac_params.S = ?; % Slack cost  % [] if no slack, Scalar >= 0 for 1-dim input, matrix >= 0 for n-dim constraints
 
 %%
 params.sys_params = sys_params;

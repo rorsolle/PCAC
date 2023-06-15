@@ -5,13 +5,14 @@ clear; %close all;
 
 cd .\Examples
 
-%Example_S_5
-%Example_S_6
 %Example_1 
 %Example_2
 %Example_3
-Example_single_pendulum
+%Example_single_pendulum
 %Example_double_pendulum
+%Example_duffing
+%Example_ball_and_beam
+%Example_three_body
 %Example_deep_stall
  
 cd ../Code
@@ -24,7 +25,6 @@ params = format_parameters(params); % Format parameters
 tic
 
 % Choose your algorithm
-
 fun = @pcac_paper;
 %fun = @pcac_rate_based;
 
@@ -51,5 +51,6 @@ plot_results(t,Y,U,Theta,P,params,approach)
 
 % profile off
 % profile viewer
-
+ 
 cd ../
+

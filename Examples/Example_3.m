@@ -51,6 +51,7 @@ pcac_params.l = 50;
 pcac_params.Q_bar = 4;%*eye(pcac_params.l - 1);
 pcac_params.P_bar = 4;
 pcac_params.R = 1;%*eye(pcac_params.l);
+pcac_params.S = [];%*eye(pcac_params.l);
 
 %%
 params.sys_params = sys_params;
