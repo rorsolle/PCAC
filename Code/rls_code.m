@@ -1,4 +1,4 @@
-function [Theta,P] = rls_code(idx, Y, U, P, Theta, params)
+function [Theta,P,lambda] = rls_code(idx, Y, U, P, Theta, params)
 % Recursive Least Squares Online Identification
 
 rls_params = params.rls_params;

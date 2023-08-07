@@ -3,7 +3,7 @@ function u_pcac = pcac_paper_test(idx, Y, U, theta, params)
 %% Compute x_1|k and u_k = U(k)
 x_1 = one_step_prediction(idx, Y, U, theta, params);
 
-u_k = U(:,idx-1);
+u_k = U(:,idx);
 
 %% PCAC matrices from Theta
 [A_k,B_k,C_k,D_k] = pcac_matrices_representation_1(theta,params);
@@ -26,7 +26,7 @@ C_c = sys_params.C_c;
 C = sys_params.C;
 D = sys_params.D;
 ref = sys_params.ref;
-R_kl = kron(ones(l,1),ref(idx));
+R_kl = reshape(ref(idx:idx+l-1),[],1);
 
 %% RLS parameters
 rls_params = params.rls_params;
@@ -55,13 +55,14 @@ D_l = kron(ones(l,1),D);
 U_min = kron(ones(l,1),u_min);U_max = kron(ones(l,1),u_max);
 DeltaU_min = kron(ones(l,1),delta_u_min);DeltaU_max = kron(ones(l,1),delta_u_max);
 
-Q = blkdiag(Q_bar*eye(l - 1),P_bar);
+Q = blkdiag(kron(eye(l - 1),Q_bar),P_bar);
+R = kron(eye(l),R);
 
 Grad_mat = eye(l*n_u) - diag(ones(1,(l-1)*n_u),-n_u);
 Grad_u = [-eye(n_u);zeros((l-1)*n_u,n_u)];
 
 % Cost function
-H = (C_tl*T)'*Q*(C_tl*T) + Grad_mat'*R*eye(l)*Grad_mat;
+H = (C_tl*T)'*Q*(C_tl*T) + Grad_mat'*R*Grad_mat;
 f = (Q*C_tl*T)'*(C_tl*(Gamma*x_1) - R_kl) + (R*Grad_mat)'*(Grad_u*u_k);
 
 % Inequalities

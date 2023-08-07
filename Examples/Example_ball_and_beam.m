@@ -10,7 +10,7 @@ g=9.81;m=0.1;J=0.3;
 f = @(t,x,u) [x(2);
               x(1).*x(4).^2-g.*sin(x(3));
               x(4);
-              -m*x(1)./(m*x(1).^2+J).*(2*x(2).*x(4)+g*cos(x(3))) + u/(m*x(1).^2+J)]; % Column vector
+              -m*x(1)./(m*x(1).^2+J).*(2*x(2).*x(4)+g*cos(x(3))) + u./(m*x(1).^2+J)]; % Column vector
 G = @(t,x,u) [x(1);x(3)]; % Column vector
 
 % Initial condition
@@ -52,7 +52,8 @@ rls_params.n_est = 2; %nhat
 
 % Initialization of Theta_0/P_0
 rls_params.Theta_0 = [-2,0.43,1,-0.38,0,0.09,0,-1.8,0,0,0,0.77,0.03,0.01]'; % Scalar or column vector
-rls_params.Theta_0 = linearize_guess(x0,sys_params,rls_params); % Scalar or column vector
+rls_params.Theta_0 = [-2,1,0,0,0,0,0.0300,0.4300,-0.3800,0.0900,-1.8000,0,0.7700,0.0100]';
+%rls_params.Theta_0 = linearize_guess([0;0;0;0],sys_params,rls_params); % Scalar or column vector
 
 rls_params.P_0 = 1000; % Scalar or matrix
 
@@ -80,7 +81,7 @@ pcac_params.l = 20; % Horizon  % int > 0
 pcac_params.Q_bar = 40; % Tracking error cost % Scalar >= 0 for 1-dim error, matrix >=0 for n-dim error
 pcac_params.P_bar = 40; % Terminal tracking error cost  % Scalar >= 0 for 1-dim error, matrix >= 0 for n-dim error
 pcac_params.R = 1; % Rate input cost  % Scalar >= 0 for 1-dim input, matrix >= 0 for n-dim input
-pcac_params.S = [];%5*1000; % Rate input cost  % Scalar >= 0 for 1-dim input, matrix >= 0 for n-dim input
+pcac_params.S = 5*1000*eye(4); % Rate input cost  % Scalar >= 0 for 1-dim input, matrix >= 0 for n-dim input
 
 %%
 params.sys_params = sys_params;

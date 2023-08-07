@@ -7,11 +7,11 @@ pcac_params = params.pcac_params;
 
 if params.sys_params.sys_type == "LTI"
     % Number of I/O from a LTI system
-     sys_params.n_u = size(sys_params.tf.InputDelay,1);
-     sys_params.n_y = size(sys_params.tf.OutputDelay,1);
+     sys_params.n_u = size(sys_params.tf{1}.InputDelay,1);
+     sys_params.n_y = size(sys_params.tf{1}.OutputDelay,1);
     
     % Theta reference (works only for SISO system)
-    [num,den] = tfdata(sys_params.tf);
+    [num,den] = tfdata(sys_params.tf{1});
     num=num{1};den=den{1};
     sys_params.theta_ref = [den(2:end),num]'; 
 
@@ -35,7 +35,7 @@ else
     assert(rls_params.t_n<rls_params.t_d)
 end
 
-assert(all(size(sys_params.C_t) == [size(sys_params.ref(0),1), sys_params.n_y]))
+assert(all(size(sys_params.C_t) == [size(sys_params.ref(1),1), sys_params.n_y]))
 
 params.sys_params = sys_params;
 params.rls_params = rls_params;

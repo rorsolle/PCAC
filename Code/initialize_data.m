@@ -1,4 +1,4 @@
-function [Y,U,V,W,Theta,P] = initialize_data(params)
+function [Y,U,V,W,Theta,P,Lambda] = initialize_data(params)
 % Initialization of datasets
 
 sys_params = params.sys_params;
@@ -18,6 +18,9 @@ P(:,:,1) = rls_params.P_0*eye(params.nb_var,params.nb_var);
 %% Noise
 W = sys_params.std_w*randn(sys_params.n_u,pcac_params.nb_sample);
 V = sys_params.std_v*randn(sys_params.n_y,pcac_params.nb_sample);
+
+%% Lambda
+Lambda = zeros(1,pcac_params.nb_sample);
 
 end
 

@@ -1,0 +1,114 @@
+function [u_deepc,g] = deepc(idx, Y, U, data_Y, data_U, old_g, params)
+
+sys_params = params.sys_params;
+rls_params = params.rls_params;
+pcac_params = params.pcac_params;
+deepc_params = params.deepc_params;
+
+T_ini = deepc_params.T_ini;
+T_f = min(size(data_Y,2)-T_ini,deepc_params.T_f);
+
+y_ini = reshape(Y(:,idx-T_ini+1:idx),[],1);
+u_ini = reshape(U(:,idx-T_ini+1:idx),[],1);
+
+[Y_p,Y_f] = hankel_mat(data_Y, T_ini, T_f);
+[U_p,U_f] = hankel_mat(data_U, T_ini, T_f);
+size_g = size(Y_p,2);
+
+Q_bar = pcac_params.Q_bar;
+P_bar = pcac_params.P_bar;
+R = pcac_params.R;
+
+n_y = sys_params.n_y;
+n_u = sys_params.n_u;
+C_t = sys_params.C_t;
+C_c = sys_params.C_c;
+C = sys_params.C;
+D = sys_params.D;
+ref = sys_params.ref;
+y_r = reshape(ref(idx:idx+T_f-1),[],1);
+
+
+lambda_y_ini = deepc_params.lambda_y_ini;
+lambda_u_ini = deepc_params.lambda_u_ini;
+lambda_g = deepc_params.lambda_g;
+if deepc_params.Proj_norm
+    Proj = eye(size_g) - pinv([U_p;Y_p;U_f])*[U_p;Y_p;U_f];
+    h = @(x) norm(Proj*x,2)^2;
+else
+    Proj = eye(size_g);
+    h = deepc_params.h;
+end
+
+u_min = pcac_params.u_min;u_max = pcac_params.u_max;
+delta_u_min = pcac_params.delta_u_min;delta_u_max = pcac_params.delta_u_max;
+
+%% Blk
+U_max = kron(ones(T_f,1),u_max);
+U_min = kron(ones(T_f,1),u_min);
+Delta_U_max = kron(ones(T_f,1),delta_u_max);
+Delta_U_min = kron(ones(T_f,1),delta_u_min);
+
+C_target = kron(eye(T_f),C_t);
+C_constraint = kron(eye(T_f),C_c);
+C_ex = kron(eye(T_f),C);
+D_ex = kron(ones(T_f,1),D);
+
+Q = blkdiag(kron(eye(T_f-1),Q_bar),P_bar);
+R = kron(eye(T_f),R);
+Grad_mat = [[-eye((T_f-1)*n_u),zeros((T_f-1)*n_u,n_u)] + [zeros((T_f-1)*n_u,n_u),eye((T_f-1)*n_u)];eye(n_u),zeros(n_u,(T_f-1)*n_u)];
+B_Grad_mat = [zeros((T_f-1)*n_u,1);-u_ini(end-n_u+1:end)];
+
+    function cost = cost_function(g)
+        cost = (C_target*Y_f*g-y_r)'*Q*(C_target*Y_f*g-y_r) +...
+               (Grad_mat*U_f*g + B_Grad_mat)'*R*(Grad_mat*U_f*g + B_Grad_mat) +...
+               lambda_y_ini*(Y_p*g-y_ini)'*(Y_p*g-y_ini) +...
+               lambda_u_ini*(U_p*g-u_ini)'*(U_p*g-u_ini) +...
+               lambda_g*h(g);
+    end
+
+H = (C_target*Y_f)'*Q*C_target*Y_f +...
+    (Grad_mat*U_f)'*R*(Grad_mat*U_f) +...
+    (Y_p)'*lambda_y_ini*Y_p +...
+    (U_p)'*lambda_u_ini*U_p +...
+    lambda_g*Proj'*Proj;
+
+f = (C_target*Y_f)'*Q*(-y_r) +...
+    (Grad_mat*U_f)'*R*B_Grad_mat +...
+    (Y_p)'*lambda_y_ini*(-y_ini) +...
+    (U_p)'*lambda_u_ini*(-u_ini);
+
+
+A = [U_f;
+    -U_f;
+    Grad_mat*U_f;
+    -Grad_mat*U_f;
+    C_ex*C_constraint*Y_f];
+
+b = [U_max;
+    -U_min;
+    -B_Grad_mat + Delta_U_max;
+    B_Grad_mat-Delta_U_min;
+    D_ex];
+
+%opts = optimoptions('fmincon','Display','off');%,'MaxIterations',20);
+opts = optimoptions('quadprog','Display','off');%,'MaxIterations',20);
+
+if size_g == size(old_g,1)
+    init_g = old_g;
+else
+    init_g = zeros(size_g,1);
+end
+
+%g = fmincon(@cost_function, init_g, A, b, [],[],[],[],[],opts);
+g = quadprog(H,f, A, b, [],[],[],[],[],opts);
+%[(C_target*Y_f*g-y_r)'*Q*(C_target*Y_f*g-y_r);(Grad_mat*U_f*g + B_Grad_mat)'*R*(Grad_mat*U_f*g + B_Grad_mat);lambda_y_ini*(Y_p*g-y_ini)'*(Y_p*g-y_ini);lambda_u_ini*(U_p*g-u_ini)'*(U_p*g-u_ini);lambda_g*h(g)]
+%[rank([Y_p;Y_f;U_p;U_f]),size(Y_p,2)]
+%H = [Y_p;Y_f;U_p;U_f];
+%[coeff,score,latent,tsquared,explained,mu] = pca(H);
+u_f = U_f*g;
+u_deepc = u_f(1:n_u);
+
+end
+
+

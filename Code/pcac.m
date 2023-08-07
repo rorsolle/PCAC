@@ -1,4 +1,4 @@
-function [t,Y,U,Theta,P] = pcac(fun,Y,V,U,W,Theta,P,params)
+function [t,Y,U,Theta,P,Lambda] = pcac(fun,Y,V,U,W,Theta,P,Lambda,params)
 
 sat = @(x) min(max(x,params.pcac_params.u_min),params.pcac_params.u_max);
 sat_delta = @(dx) min(max(dx,params.pcac_params.delta_u_min),params.pcac_params.delta_u_max);
@@ -23,7 +23,8 @@ if strcmp(func2str(fun),'pcac_disturbance')
         U(:,k) = u_pcac;
         Dist(:,k+1) = dist;
     end
-    [Theta,P] = rls_code(k, Y + V, U, P, Theta, params); %RLS
+    [Theta,P,lambda] = rls_code(k, Y + V, U, P, Theta, params); %RLS
+    Lambda(k) = lambda;
 
     x0 = ssG.A*x0 + ssG.B*(U(:,k)+W(:,k)); %System reponse
 %     Y = lsim(params.sys_params.tf,(U+W)',t)'; %System reponse
@@ -39,16 +40,20 @@ for k=1:params.pcac_params.nb_sample-1
     if k>params.rls_params.n_est
         u_pcac = fun(k, Y + V, U, Theta(:,k), params); %PCAC
         U(:,k+1) = sat(U(:,k) + sat_delta(u_pcac-U(:,k)));
+        %U(:,k+1) = 0;
+    else
+        U(:,k+1) = (params.pcac_params.u_max + params.pcac_params.u_min)/2 + 0.2*(params.pcac_params.u_max - params.pcac_params.u_min)/2.*(2*rand(params.sys_params.n_u,1)-1);
     end
 
-    [Theta,P] = rls_code(k, Y + V, U, P, Theta, params); %RLS
+    [Theta,P,lambda] = rls_code(k, Y + V, U, P, Theta, params); %RLS
+    Lambda(k) = lambda;
     x = simu_fct(linspace(t(k),t(k+1),2), x,U(:,k)+W(:,k),params); %System reponse
-    %Y = lsim(params.sys_params.tf,(U+W)',t)'; %System reponse
 end
 end
 
 Y(:,k+1) = measure_fct(t(k+1),x,U(:,k+1)+W(:,k+1),params) + V(:,k+1);
-[Theta,P] = rls_code(k+1, Y + V, U, P, Theta, params); %RLS
+[Theta,P,lambda] = rls_code(k+1, Y + V, U, P, Theta, params); %RLS
+Lambda(k+1) = lambda;
 
 end
 

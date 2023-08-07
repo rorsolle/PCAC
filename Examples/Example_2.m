@@ -1,3 +1,5 @@
+params.save = 0;
+
 Ts = 1;
 z = tf('z',Ts);
 
@@ -33,8 +35,9 @@ rls_params.properties = ["Strictly proper"];
 sys_params.sys_type = "LTI"; %"LTI" or "NL"
 
 % If LTI
-sys_params.tf = G;
-sys_params.ss = ss;
+sys_params.tf = {G};
+sys_params.ss = {ss};
+sys_params.switch = [];
 
 % If NL
 %sys_params.f = f;
@@ -59,13 +62,13 @@ sys_params.std_w = 0; % Input
 sys_params.std_v = 0; % Output
 
 %% Predictive Cost Adaptive Control (PCAC) parameters
-pcac_params.nb_sample = 100;
+pcac_params.nb_sample = 60;
 
 % Input constraints
-pcac_params.u_min = -50;
-pcac_params.u_max = 50;
-pcac_params.delta_u_min = -10;
-pcac_params.delta_u_max = 10;
+pcac_params.u_min = -5;
+pcac_params.u_max = 5;
+pcac_params.delta_u_min = -5;
+pcac_params.delta_u_max = 5;
 
 pcac_params.l = 20;
 pcac_params.Q_bar = 2; % Tracking error cost
@@ -73,7 +76,21 @@ pcac_params.P_bar = 5; % Terminal tracking error cost
 pcac_params.R = 1; % Rate input cost
 pcac_params.S = [];%*eye(size(sys_params.C,1)); % Rate input cost
 
+%% DeePC Parameters
+
+deepc_params.max_data = 1000;
+deepc_params.T_d = 10;
+deepc_params.nb_try = 5;
+deepc_params.T_ini = 2;%rls_params.n_est;
+deepc_params.T_f = pcac_params.l;
+deepc_params.lambda_y_ini = 10^3;
+deepc_params.lambda_u_ini = 10^3;
+deepc_params.lambda_g = 0.01;
+deepc_params.h = @(x) x'*x;
+deepc_params.Proj_norm = 1;
+
 %%
 params.sys_params = sys_params;
 params.rls_params = rls_params;
 params.pcac_params = pcac_params;
+params.deepc_params = deepc_params;

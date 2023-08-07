@@ -1,4 +1,4 @@
-function [] = plot_results(t,Y,U,Theta,P,params,approach)
+function [] = plot_results(t,Y,U,Theta,P,Lambda,params,approach)
 sys_params = params.sys_params;
 rls_params = params.rls_params;
 pcac_params = params.pcac_params;
@@ -8,11 +8,25 @@ n_est = rls_params.n_est;
 %% Plot
 linewidth=2;
 
+is_save_fig = isfield(params,'save') && params.save;
+if is_save_fig
+    cd ..\Simulations
+    new_sim = "Sim"+string(datetime)+".mat";
+    new_sim=strrep(new_sim,' ','_');
+    new_sim=strrep(new_sim,'-','_');
+    new_sim=strrep(new_sim,':','_');
+    status = mkdir(new_sim);
+    [~] = cd(new_sim);
+end
+
+figs = [];
+
 % Theta
 if params.nb_var == length(sys_params.theta_ref)
-    figure(1)
+    fig1 = figure(1);
     sqrt_nb_var = ceil(sqrt(params.nb_var));
     for k=1:params.nb_var
+        hold on
     subplot(sqrt_nb_var,ceil(params.nb_var/sqrt_nb_var),k)
     loglog(abs(Theta(k,:) - sys_params.theta_ref(k))',"LineWidth",linewidth)
     xlabel("k (step)")
@@ -20,15 +34,21 @@ if params.nb_var == length(sys_params.theta_ref)
     ylabel(text,'Interpreter','latex','FontWeight','bold')
     end
     title("Parameter estimation error")
+    
+    if params.save
+        saveas(fig1, "Theta_err");
+    end
+    figs = [figs,fig1];
+
 end
 
 
 % Input Output
 
 if sys_params.sys_type == "LTI"
-    figure(2)
+    fig2 = figure(2);
     ax1 = subplot(6,1,1);
-    stairs(t,Y',"LineWidth",linewidth)
+    stairs(t,(sys_params.C_t*Y)',"LineWidth",linewidth)
     hold on
     stairs(t,sys_params.ref(t),"--k","LineWidth",linewidth)
     ylabel("Output")
@@ -52,10 +72,10 @@ if sys_params.sys_type == "LTI"
     length_impulse = 30;
     u_impulse = zeros(sys_params.n_u,length_impulse);
     u_impulse(:,1) = 1;
-    y_impulse = lsim(sys_params.tf,u_impulse',0:length_impulse-1)';
+    y_impulse = lsim(sys_params.tf{1},u_impulse',0:length_impulse-1)';
     Delta_IR = zeros(1,pcac_params.nb_sample);
     Delta_DC = zeros(1,pcac_params.nb_sample);
-    [num,den] = tfdata(sys_params.tf);
+    [num,den] = tfdata(sys_params.tf{1});
     DC = sum(num{1})/(sum(den{1})-1);
     for k=1:pcac_params.nb_sample
     G_hat = tf(Theta(n_est+1:end,k)',[1;Theta(1:n_est,k)]',1);
@@ -67,11 +87,13 @@ if sys_params.sys_type == "LTI"
     
     ax4 = subplot(6,1,4);
     stairs(t,log(Delta_IR),"LineWidth",linewidth)
+    hold on
     ylabel("log||\Delta IR||")
     set(gca,'XTickLabel',[])
     
     ax5 = subplot(6,1,5);
     stairs(t,log(Delta_DC),"LineWidth",linewidth)
+    hold on
     xlabel("k (step)")
     ylabel("log||\Delta DC||")
     
@@ -105,7 +127,8 @@ if sys_params.sys_type == "LTI"
     
     set(ax6, 'pos', p6);%set h1 position
     
-    pzplot(sys_params.tf,G_hat)
+    pzplot(sys_params.tf{1},G_hat)
+    hold on
     legend(["Reference","Estimated"])
     
     a=findobj(gca,'type','line');
@@ -115,7 +138,7 @@ if sys_params.sys_type == "LTI"
     set(a(5),'LineWidth',linewidth);
 
 else
-    figure(2)
+    fig2 = figure(2);
     ax1 = subplot(3,1,1);
     stairs(t,(sys_params.C_t*Y)',"LineWidth",linewidth)
     hold on
@@ -134,13 +157,14 @@ else
     
     ax3 = subplot(3,1,3);
     stairs(t,log(abs(sys_params.C_t*Y - sys_params.ref(1:length(t))))',"LineWidth",linewidth)
+    xlabel("Time (seconds)")
     ylabel("log|y_k - r_k|")
-    set(gca,'XTickLabel',[])
-    
+
+    linkaxes([ax1,ax2,ax3],'x')
 end
 
 % Covariance matrix
-figure(3)
+fig3 = figure(3);
 for k=1:pcac_params.nb_sample
     T(k) = trace(P(:,:,k));
     D(k) = det(P(:,:,k));
@@ -157,3 +181,32 @@ xlabel("k (step)")
 text = '$det(P)$';
 ylabel(text,'Interpreter','latex','FontWeight','bold')
 title("Trace and Determinant of the covariance matrix")
+
+fig4 = figure(4);
+hold on
+plot(Lambda,"LineWidth",linewidth)
+xlabel("k (step)")
+text = '$\lambda$';
+ylabel(text,'Interpreter','latex','FontWeight','bold')
+title("Forgetting coefficient")
+
+fig5 = figure(5);
+plot(Theta(:,1:end-1)',"LineWidth",linewidth)
+xlabel("k (step)")
+text = '$\Theta$';
+ylabel(text,'Interpreter','latex','FontWeight','bold')
+title("Estimated coefficients")
+
+if is_save_fig
+    saveas(fig2, "I_0");
+    saveas(fig3, "P");
+    saveas(fig4, "Lambda");
+    saveas(fig5, "Theta");
+    save("parameters.mat","params");
+    
+    cd ..\..\Code\
+end
+
+figs = [figs,fig2,fig3,fig4,fig5];
+
+end

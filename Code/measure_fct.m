@@ -6,7 +6,15 @@ sys_type = params.sys_params.sys_type;
 % Linear
 if sys_type == "LTI"
     assert(isfield(params.sys_params,"ss"));
-    ss = params.sys_params.ss;
+    assert(isfield(params.sys_params,"switch"));
+
+    first_idx = find(params.sys_params.switch>t(1),1);
+    if isempty(first_idx)
+        idx_sys = length(params.sys_params.switch)+1;
+    else
+        idx_sys = first_idx;
+    end
+    ss = params.sys_params.ss{idx_sys};
     y = ss.C*x + ss.D*u;
 
 % Nonlinear

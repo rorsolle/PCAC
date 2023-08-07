@@ -43,7 +43,7 @@ for i=1:n_x
     Con_mat(1:n_x,(i-1)*n_u+1:i*n_u) = A^(n_x-i)*B;
 end
 
-F_mat = C*A^n_x*pinv(Obs_mat_x);
+F_mat = -C*A^n_x*pinv(Obs_mat_x);
 G_mat = C*(Con_mat - A^n_x*pinv(Obs_mat_x)*Obs_mat_u);
 F_mat_1 = zeros(size(F_mat));
 G_mat_1 = zeros(size(G_mat));
@@ -55,9 +55,9 @@ for i=1:n_x
 end
 
 if n_est <= n_x
-    theta = [-reshape(F_mat_1(1:n_y,1:n_y*n_est),1,[]),reshape(G_0,1,[]),reshape(G_mat_1(1:n_y,1:n_u*n_est),1,[])]';
+    theta = [reshape(F_mat_1(1:n_y,1:n_y*n_est),1,[]),reshape(G_0,1,[]),reshape(G_mat_1(1:n_y,1:n_u*n_est),1,[])]';
 else
-    theta = [-reshape([F_mat_1,zeros(n_y,(n_est-n_x)*n_y)],1,[]),reshape(G_0,1,[]),reshape([G_mat_1,zeros(n_y,(n_est-n_x)*n_u)],1,[])]';
+    theta = [reshape([F_mat_1,zeros(n_y,(n_est-n_x)*n_y)],1,[]),reshape(G_0,1,[]),reshape([G_mat_1,zeros(n_y,(n_est-n_x)*n_u)],1,[])]';
 end
 
 end

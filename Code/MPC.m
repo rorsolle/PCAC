@@ -64,5 +64,5 @@ else
 %     idx = [nx + (1:N*nx),(N*nx+1:(N+1)*nx),(N+1)*nx + nu + (1:(N-1)*nu),((N+1)*nx+(N-1)*nu+1:(N+1)*nx+N*nu)];
 %     next_guess = MPC(idx);
 end
-
+%[all(MPC <= UB),all(MPC >= LB),all(A_ineq*MPC<=B_ineq),all(Aeq*MPC==Beq)]
 end

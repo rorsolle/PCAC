@@ -60,6 +60,7 @@ rls_params.lambda = ?; % 1 >= Scalar > 0
 rls_params.t_d = ?; % int > 0
 rls_params.t_n = ?; % int > 0
 rls_params.eta = ?; % scalar >= 0
+rls_params.alpha = ?; % 1>= scalar >= 0 (DOESN'T WORK)
 
 % Hypothesis on the estimated system
 rls_params.properties = ["Strictly proper"];
@@ -79,7 +80,21 @@ pcac_params.P_bar = ?; % Terminal tracking error cost  % Scalar >= 0 for 1-dim e
 pcac_params.R = ?; % Rate input cost  % Scalar >= 0 for 1-dim input, matrix >= 0 for n-dim input
 pcac_params.S = ?; % Slack cost  % [] if no slack, Scalar >= 0 for 1-dim input, matrix >= 0 for n-dim constraints
 
+%% DeePC Parameters
+
+deepc_params.max_data = ?; %number of samples to create the Hankel Matrix
+deepc_params.T_d = ?; %length of trials (DOESN'T WORK)
+deepc_params.nb_try = ?; %number of trials (DOESN'T WORK)
+deepc_params.T_ini = ?;
+deepc_params.T_f = ?;
+deepc_params.lambda_y_ini = ?;
+deepc_params.lambda_u_ini = ?;
+deepc_params.lambda_g = ?;
+deepc_params.h = @(x) x'*x;
+deepc_params.Proj_norm = 1; % If 1, h = ||(I-Pi)g||^2;
+
 %%
 params.sys_params = sys_params;
 params.rls_params = rls_params;
 params.pcac_params = pcac_params;
+params.deepc_params = deepc_params;
